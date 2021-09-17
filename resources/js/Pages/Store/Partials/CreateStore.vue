@@ -85,7 +85,7 @@ export default defineComponent({
             this.form.post(route('stores.store'), {
                 errorBag: 'createStore',
                 preserveScroll: true,
-                onSuccess: () => alert('FORM SubmiTTED'),
+                onSuccess: () => this.closeModal(),
                 onError: () => {
                     alert('FORM ERROR')
                 }

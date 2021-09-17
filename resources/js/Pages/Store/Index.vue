@@ -19,7 +19,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="row in data">
+                            <tr v-for="row in data" :key="row.id">
                                 <td class="border px-4 py-2">{{ row.id }}</td>
                                 <td class="border px-4 py-2">{{ row.url }}</td>
                                 <td class="border px-4 py-2">

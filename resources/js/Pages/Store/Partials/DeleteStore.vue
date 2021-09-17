@@ -3,10 +3,10 @@
 
     <jet-confirmation-modal :show="deletingStore" @close="closeModal">
         <template #title>
-            Delete Store
+            Delete {{form.url}} Store
         </template>
         <template #content>
-            Are you sure you want to delete the store? Once the store is deleted, all of its resources and data will be permanently deleted.
+            Are you sure you want to delete the {{store.url}} store? Once the store is deleted, all of its resources and data will be permanently deleted.
         </template>
         <template #footer>
             <jet-secondary-button @click="closeModal">
@@ -51,6 +51,7 @@ export default defineComponent({
         return {
             deletingStore: false,
             form: this.$inertia.form({
+                url: this.store.url,
             })
         }
     },
@@ -61,11 +62,13 @@ export default defineComponent({
         },
         closeModal() {
             this.deletingStore = false
+            this.form.reset();
         },
         deleteStore() {
             this.form.delete(route('stores.destroy', this.store), {
                 preserveScroll: true,
                 onSuccess: () => this.closeModal(),
+                onFinish: () => this.form.reset(),
             })
         },
     },

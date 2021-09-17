@@ -36,20 +36,7 @@ class StoreController extends Controller
         $store->consumer_secret = $request->input('consumer_secret');
         $user->stores()->save($store);
 
-        $data = Store::all();
-        return Inertia::render('Store/Index', ['data' => $data]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Store  $store
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Store $store)
-    {
-        $data = Store::all();
-        return Inertia::render('Index', ['data' => $data]);
+        return redirect()->back();
     }
 
     /**
@@ -65,8 +52,7 @@ class StoreController extends Controller
 
         $store->fill($input)->save();
 
-        $data = Store::all();
-        return Inertia::render('Store/Index', ['data' => $data]);
+        return redirect()->back();
     }
 
     /**
@@ -78,7 +64,6 @@ class StoreController extends Controller
     public function destroy(Store $store)
     {
         $store->delete();
-        $data = Store::all();
-        return Inertia::render('Store/Index', ['data' => $data]);
+        return redirect()->back();
     }
 }

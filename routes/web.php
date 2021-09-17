@@ -29,5 +29,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 
-Route::resource('stores', \App\Http\Controllers\StoreController::class);
+Route::middleware(['auth:sanctum', 'verified'])->resource('stores', \App\Http\Controllers\StoreController::class)->only([
+    'index', 'destroy', 'update', 'store'
+]);;
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
+Route::middleware(['auth:sanctum', 'verified'])->post('/products/uploadCsv', [\App\Http\Controllers\ProductController::class, 'uploadCsv'])->name('products.uploadCsv');
 
