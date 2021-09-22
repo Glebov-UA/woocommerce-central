@@ -77,7 +77,7 @@ class CsvParseService implements CsvParseServiceInterface
         return $data;
     }
 
-    private function prepareJson($store ,$data) {
+    private function prepareJson($store, $data) {
         $products = array();
         foreach ($data as $indexData => $productData) {
             $product = array();
@@ -129,12 +129,16 @@ class CsvParseService implements CsvParseServiceInterface
                         break;
                     case 'Images':
                         $arr = explode(', ', $value);
+                        $images = [];
                         foreach ($arr as $image) {
-                            array_push($arr, ["src" => $image]);
+                            array_push($images, ["src" => $image]);
                         }
+                        $product['images'] = $images;
                         break;
                     default:
-
+                        if (str_contains($key ,'Attribute')) {
+                            $this->processAttributeValue($value, $product);
+                        }
                         break;
                 }
             }
@@ -143,18 +147,19 @@ class CsvParseService implements CsvParseServiceInterface
         return $products;
     }
 
-    private function getImageIds(Store $store, $images) {
-        $ids = [];
-        $arr = explode(', ', $images);
-
-        $func = function (Pool $pool) use ($store, $arr) {
-            $responses = [];
-            foreach ($arr as $item) {
-                array_push($responses, $pool->withBasicAuth($store->consumer_key, $store->consumer_secret)->get($store->url . '/wp-json/wc/v3/products/categories', ['search' => $category]));
-            }
-            return $responses;
-        };
+    private function processAttributeValue($value, &$product) {
+        $matches = [];
+        //if matches name and also grab id
+//        if(preg_match('Attribute\s(\d*)\s([a-zA-Z]*)', $value, $matches) == 1) {
+//            foreach ($product['attributes'] as $attribute) {
+//                if($attribute['num'] == $matches[1]) {
+//
+//                }
+//            }
+//        }
     }
+
+
 
     private function getCategoryIds(Store $store, $categories) {
         Log::debug('Getting CategoryIds',[$this, $store, $categories]);

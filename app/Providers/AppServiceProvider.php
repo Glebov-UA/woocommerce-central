@@ -4,13 +4,14 @@ namespace App\Providers;
 
 use App\Services\CsvParseService;
 use App\Services\CsvParseServiceInterface;
+use App\Services\CsvParseServiceV2;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
 
     public $singletons = [
-        CsvParseServiceInterface::class => CsvParseService::class,
+        CsvParseServiceInterface::class => CsvParseServiceV2::class,
     ];
 
     /**
