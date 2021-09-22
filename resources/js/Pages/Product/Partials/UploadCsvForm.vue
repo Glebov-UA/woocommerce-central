@@ -1,17 +1,28 @@
 <template>
-    <app-layout title="Products">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Products
-            </h2>
+    <jet-form-section @submitted="submit">
+        <template #title>
+            Upload CSV File
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <upload-csv-form v-bind:stores="stores"/>
+        <template #description>
+            Upload the data from the CSV file to the chosen stores.
+        </template>
+
+        <template #form>
+            <div v-for="row in stores" :key="row.id" class="col-span-6 sm:col-span-4">
+                <jet-checkbox @change="handleChange" v-bind:value="row.id"/><span class="ml-2 text-sm text-gray-600">{{ row.url }}</span>
             </div>
-        </div>
-    </app-layout>
+            <input class="col-span-6 sm:col-span-4" type="file" @input="form.file = $event.target.files[0]" ref="file"/>
+            <progress class="col-span-6 sm:col-span-4" v-if="form.progress" :value="form.progress.percentage" max="100">
+                {{ form.progress.percentage }}%
+            </progress>
+        </template>
+        <template #actions>
+            <jet-button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Submit
+            </jet-button>
+        </template>
+    </jet-form-section>
 </template>
 
 <script>
@@ -28,12 +39,10 @@ import JetInputError from '@/Jetstream/InputError.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import JetActionSection from '@/Jetstream/ActionSection.vue'
 import JetCheckbox from '@/Jetstream/Checkbox.vue'
-import UploadCsvForm from "./Partials/UploadCsvForm";
 
 export default defineComponent({
     props: ['stores'],
     components: {
-        UploadCsvForm,
         AppLayout,
         JetSecondaryButton,
         JetDangerButton,
