@@ -22,7 +22,7 @@ class CsvParseServiceV2 implements CsvParseServiceInterface
             $converter->convert($data);
             $batch = $converter->getProductsBatch();
             Log::debug('Uploading products',[$this]);
-            $response = Http::withBasicAuth($store->consumer_key, $store->consumer_secret)->post($store->url . '/wp-json/wc/v3/products/batch', json_decode(json_encode($batch),true));
+            $response = Http::withBasicAuth($store->consumer_key, $store->consumer_secret)->post($store->url . '/wp-json/wc/v3/products/batch', $batch->getVals());
             Log::debug('Uploading products finished. Response.',[$this, $response, $response->json()]);
         }
     }

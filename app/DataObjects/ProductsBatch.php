@@ -4,17 +4,14 @@ namespace App\DataObjects;
 
 use JsonSerializable;
 
-class ProductsBatch implements JsonSerializable
+class ProductsBatch extends AbstractDataObject
 {
-    private ?array $create = null;
-    private ?array $update = null;
-
     /**
      * @return array|null
      */
     public function getCreate(): ?array
     {
-        return $this->create;
+        return $this->getVal('create');
     }
 
     /**
@@ -22,7 +19,7 @@ class ProductsBatch implements JsonSerializable
      */
     public function setCreate(?array $create): void
     {
-        $this->create = $create;
+        $this->values['create'] = $create;
     }
 
     /**
@@ -30,7 +27,7 @@ class ProductsBatch implements JsonSerializable
      */
     public function getUpdate(): ?array
     {
-        return $this->update;
+        return $this->getVal('update');
     }
 
     /**
@@ -38,14 +35,6 @@ class ProductsBatch implements JsonSerializable
      */
     public function setUpdate(?array $update): void
     {
-        $this->update = $update;
-    }
-
-    public function jsonSerialize()
-    {
-        return array_filter([
-            'create'  => $this->create,
-            'update' => $this->update
-        ]);
+        $this->values['update'] = $update;
     }
 }

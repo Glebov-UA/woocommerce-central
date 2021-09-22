@@ -42,6 +42,7 @@ class CsvArrayToAttributesConverter
                 }
                 //If does not exist - create it
                 if(!$exists) {
+                    Log::debug('Converting attribute value - attribute does not yet exist, creating it', [$this, $this->attributes]);
                     $attributeCreationResponse = Http::withBasicAuth($this->store->consumer_key, $this->store->consumer_secret)->post($this->store->url . '/wp-json/wc/v3/products/attributes',  $attribute)->json();
                     $attribute->setId($attributeCreationResponse['id']);
                 }
@@ -59,7 +60,6 @@ class CsvArrayToAttributesConverter
         if(preg_match('/Attribute\s(\d*)\s([a-zA-Z()]*)/', $key, $matches) && !empty($value)) {
             Log::debug('Converting attribute value - preg matches', [$this, $key, $value, $matches]);
             if(!array_key_exists($matches[1], $this->attributes)) {
-                Log::debug('Converting attribute value - attribute does not yet exist, creating it', [$this, $this->attributes]);
                 $this->attributes[$matches[1]] = new Attribute();
             }
             switch ($matches[2]) {

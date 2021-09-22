@@ -4,26 +4,14 @@ namespace App\DataObjects;
 
 use JsonSerializable;
 
-class Product implements JsonSerializable
+class Product extends AbstractDataObject
 {
-    private ?int $id = null;
-    private ?string $name = null;
-    private ?string $sku = null;
-    private ?string $short_description = null;
-    private ?string $description = null;
-    private ?string $status = null;
-    private ?string $stock_status = null;
-    private ?string $regular_price = null;
-    private ?array $categories = null;
-    private ?array $images = null;
-    private ?array $attributes = null;
-
     /**
      * @return int|null
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->getVal('id');
     }
 
     /**
@@ -31,7 +19,7 @@ class Product implements JsonSerializable
      */
     public function setId(?int $id): void
     {
-        $this->id = $id;
+        $this->values['id'] = $id;
     }
 
     /**
@@ -39,7 +27,7 @@ class Product implements JsonSerializable
      */
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->getVal('name');
     }
 
     /**
@@ -47,7 +35,7 @@ class Product implements JsonSerializable
      */
     public function setName(?string $name): void
     {
-        $this->name = $name;
+        $this->values['name'] = $name;
     }
 
     /**
@@ -55,7 +43,7 @@ class Product implements JsonSerializable
      */
     public function getSku(): ?string
     {
-        return $this->sku;
+        return $this->getVal('sku');
     }
 
     /**
@@ -63,7 +51,7 @@ class Product implements JsonSerializable
      */
     public function setSku(?string $sku): void
     {
-        $this->sku = $sku;
+        $this->values['sku'] = $sku;
     }
 
     /**
@@ -71,7 +59,7 @@ class Product implements JsonSerializable
      */
     public function getShortDescription(): ?string
     {
-        return $this->short_description;
+        return $this->getVal('short_description');
     }
 
     /**
@@ -79,7 +67,7 @@ class Product implements JsonSerializable
      */
     public function setShortDescription(?string $short_description): void
     {
-        $this->short_description = $short_description;
+        $this->values['short_description'] = $short_description;
     }
 
     /**
@@ -87,7 +75,7 @@ class Product implements JsonSerializable
      */
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->getVal('description');
     }
 
     /**
@@ -95,7 +83,7 @@ class Product implements JsonSerializable
      */
     public function setDescription(?string $description): void
     {
-        $this->description = $description;
+        $this->values['description'] = $description;
     }
 
     /**
@@ -103,7 +91,7 @@ class Product implements JsonSerializable
      */
     public function getStatus(): ?string
     {
-        return $this->status;
+        return $this->getVal('status');
     }
 
     /**
@@ -111,7 +99,7 @@ class Product implements JsonSerializable
      */
     public function setStatus(?string $status): void
     {
-        $this->status = $status;
+        $this->values['status'] = $status;
     }
 
     /**
@@ -119,7 +107,7 @@ class Product implements JsonSerializable
      */
     public function getStockStatus(): ?string
     {
-        return $this->stock_status;
+        return $this->getVal('stock_status');
     }
 
     /**
@@ -127,7 +115,7 @@ class Product implements JsonSerializable
      */
     public function setStockStatus(?string $stock_status): void
     {
-        $this->stock_status = $stock_status;
+        $this->values['stock_status'] = $stock_status;
     }
 
     /**
@@ -135,7 +123,7 @@ class Product implements JsonSerializable
      */
     public function getRegularPrice(): ?string
     {
-        return $this->regular_price;
+        return $this->getVal('regular_price');
     }
 
     /**
@@ -143,7 +131,7 @@ class Product implements JsonSerializable
      */
     public function setRegularPrice(?string $regular_price): void
     {
-        $this->regular_price = $regular_price;
+        $this->values['regular_price'] = $regular_price;
     }
 
     /**
@@ -151,7 +139,7 @@ class Product implements JsonSerializable
      */
     public function getCategories(): ?array
     {
-        return $this->categories;
+        return $this->getVal('categories');
     }
 
     /**
@@ -159,7 +147,7 @@ class Product implements JsonSerializable
      */
     public function setCategories(?array $categories): void
     {
-        $this->categories = $categories;
+        $this->values['categories'] = $categories;
     }
 
     /**
@@ -167,7 +155,7 @@ class Product implements JsonSerializable
      */
     public function getImages(): ?array
     {
-        return $this->images;
+        return $this->getVal('images');
     }
 
     /**
@@ -175,7 +163,7 @@ class Product implements JsonSerializable
      */
     public function setImages(?array $images): void
     {
-        $this->images = $images;
+        $this->values['images'] = $images;
     }
 
     /**
@@ -183,7 +171,7 @@ class Product implements JsonSerializable
      */
     public function getAttributes(): ?array
     {
-        return $this->attributes;
+        return $this->getVal('attributes');
     }
 
     /**
@@ -191,25 +179,22 @@ class Product implements JsonSerializable
      */
     public function setAttributes(?array $attributes): void
     {
-        $this->attributes = $attributes;
+        $this->values['attributes'] = $attributes;
     }
 
-
-
-    public function jsonSerialize()
+    /**
+     * @return array|null
+     */
+    public function getMetaData(): ?array
     {
-        return array_filter([
-            'id'  => $this->id,
-            'name' => $this->name,
-            'sku' => $this->sku,
-            'short_description' => $this->short_description,
-            'description' => $this->description,
-            'status' => $this->status,
-            'stock_status' => $this->stock_status,
-            'regular_price' => $this->regular_price,
-            'categories' => $this->categories,
-            'images' => $this->images,
-            'attributes' => $this->attributes,
-        ]);
+        return $this->getVal('meta_data');
+    }
+
+    /**
+     * @param array|null $attributes
+     */
+    public function setMetaData(?array $attributes): void
+    {
+        $this->values['meta_data'] = $attributes;
     }
 }

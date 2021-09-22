@@ -4,17 +4,14 @@ namespace App\DataObjects;
 
 use JsonSerializable;
 
-class Category implements JsonSerializable
+class Category extends AbstractDataObject
 {
-    private ?int $id = null;
-    private ?string $name = null;
-
     /**
      * @return int|null
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->getVal('id');
     }
 
     /**
@@ -22,7 +19,7 @@ class Category implements JsonSerializable
      */
     public function setId(?int $id): void
     {
-        $this->id = $id;
+        $this->values['id'] = $id;
     }
 
     /**
@@ -30,7 +27,7 @@ class Category implements JsonSerializable
      */
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->getVal('name');
     }
 
     /**
@@ -38,16 +35,6 @@ class Category implements JsonSerializable
      */
     public function setName(?string $name): void
     {
-        $this->name = $name;
-    }
-
-
-
-    public function jsonSerialize()
-    {
-        return array_filter([
-            'id'  => $this->id,
-            'name' => $this->name,
-        ]);
+        $this->values['name'] = $name;
     }
 }

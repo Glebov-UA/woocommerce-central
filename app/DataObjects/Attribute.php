@@ -4,19 +4,14 @@ namespace App\DataObjects;
 
 use JsonSerializable;
 
-class Attribute implements JsonSerializable
+class Attribute extends AbstractDataObject
 {
-    private ?int $id = null;
-    private ?string $name = null;
-    private ?array $options = null;
-    private ?bool $visible = null;
-
     /**
      * @return int|null
      */
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->getVal('id');
     }
 
     /**
@@ -24,7 +19,7 @@ class Attribute implements JsonSerializable
      */
     public function setId(?int $id): void
     {
-        $this->id = $id;
+        $this->values['id'] = $id;
     }
 
     /**
@@ -32,7 +27,7 @@ class Attribute implements JsonSerializable
      */
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->getVal('name');
     }
 
     /**
@@ -40,7 +35,7 @@ class Attribute implements JsonSerializable
      */
     public function setName(?string $name): void
     {
-        $this->name = $name;
+        $this->values['name'] = $name;
     }
 
     /**
@@ -48,7 +43,7 @@ class Attribute implements JsonSerializable
      */
     public function getOptions(): ?array
     {
-        return $this->options;
+        return $this->getVal('options');
     }
 
     /**
@@ -56,7 +51,7 @@ class Attribute implements JsonSerializable
      */
     public function setOptions(?array $options): void
     {
-        $this->options = $options;
+        $this->values['options'] = $options;
     }
 
     /**
@@ -64,7 +59,7 @@ class Attribute implements JsonSerializable
      */
     public function getVisible(): ?bool
     {
-        return $this->visible;
+        return $this->getVal('visible');
     }
 
     /**
@@ -72,17 +67,6 @@ class Attribute implements JsonSerializable
      */
     public function setVisible(?bool $visible): void
     {
-        $this->visible = $visible;
+        $this->values['visible'] = $visible;
     }
-
-    public function jsonSerialize()
-    {
-        return array_filter([
-            'id'  => $this->id,
-            'name' => $this->name,
-            'visible' => $this->visible,
-            'options' => $this->options
-        ]);
-    }
-
 }

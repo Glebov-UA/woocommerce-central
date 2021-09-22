@@ -3,7 +3,9 @@
 namespace App\DataObjects\Converters;
 
 use App\DataObjects\Attribute;
+use App\DataObjects\MetaData;
 use App\DataObjects\Product;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class CsvArrayToProductConverter
@@ -12,6 +14,7 @@ class CsvArrayToProductConverter
     private $product;
 
     private CsvArrayToAttributesConverter $attributesConverter;
+    private array $metaData;
 
     /**
      * @param $store
@@ -21,6 +24,7 @@ class CsvArrayToProductConverter
         $this->store = $store;
         $this->product = new Product();
         $this->attributesConverter = new CsvArrayToAttributesConverter($store);
+        $this->metaData = [];
     }
 
     /**
@@ -38,6 +42,9 @@ class CsvArrayToProductConverter
             Log::debug('Preparing Json. Key is', [$this, $key]);
             Log::debug('Preparing Json. Value is', [$this, $value]);
             switch ($key) {
+                case 'ID':
+                    $this->convertId($value);
+                    break;
                 case 'SKU':
                     $this->convertSku($value);
                     break;
@@ -67,17 +74,40 @@ class CsvArrayToProductConverter
                     break;
                 default:
                     if (str_contains($key, 'Attribute')) {
-                        $this->processAttributes($key, $value);
+                        $this->convertAttribute($key, $value);
+                    }
+                    if (str_contains($key, 'Meta')) {
+                        $this->convertMetaData($key, $value);
                     }
                     break;
             }
         }
         $this->finalizeAttributes();
+        $this->finalizeMetaData();
+    }
+
+    private function convertId($value)
+    {
+        $this->product->setId($value);
     }
 
     private function convertSku($value)
     {
         $this->product->setSku($value);
+        $this->checkIfExistsBySku($value);
+    }
+
+    private function checkIfExistsBySku($sku) {
+        $skuSearchResponse = Http::withBasicAuth($this->store->consumer_key, $this->store->consumer_secret)->get($this->store->url . '/wp-json/wc/v3/products',  ['sku' => $sku])->json();
+        Log::debug('Checking if sku already exists.', [$this, $sku, $skuSearchResponse]);
+        foreach ($skuSearchResponse as $response) {
+            if($response['sku'] == $sku) {
+                Log::debug('Checking if sku already exists. - it does', [$this, $sku]);
+                $this->product->setId($response['id']);
+                return;
+            }
+        }
+        Log::debug('Checking if sku already exists. - it does not', [$this, $sku]);
     }
 
     private function convertName($value)
@@ -141,36 +171,28 @@ class CsvArrayToProductConverter
         $this->product->setImages($images);
     }
 
-    private function convertAttributeValue($key, $value) {
-        Log::debug('Converting attribute value', [$this, $key, $value]);
-        if(preg_match('/Attribute\s(\d*)\s([a-zA-Z()]*)/', $key, $matches) && !empty($value)) {
-            Log::debug('Converting attribute value - preg matches', [$this, $key, $value, $matches]);
-            if(!array_key_exists($matches[1], $this->attributes)) {
-                Log::debug('Converting attribute value - attribute does not yet exist, creating it', [$this, $this->attributes]);
-                $this->attributes[$matches[1]] = new Attribute();
-            }
-            switch ($matches[2]) {
-                case 'name':
-                    $this->attributes[$matches[1]]->setName($value);
-                    break;
-                case 'visible':
-                    if($value == '1') {
-                        $this->attributes[$matches[1]]->setVisible(true);
-                    } else {
-                        $this->attributes[$matches[1]]->setVisible(false);
-                    }
-                    break;
-                case 'value(s)':
-                    $this->attributes[$matches[1]]->setOptions(explode(', ', $value));
-            }
-        }
-    }
-
-    private function processAttributes($key, $value) {
+    private function convertAttribute($key, $value) {
         $this->attributesConverter->convert($key, $value);
     }
 
     private function finalizeAttributes() {
         $this->product->setAttributes($this->attributesConverter->getAttributes());
+    }
+
+    //Meta: _wcj_purchase_price
+    private function convertMetaData($key, $value) {
+        if(preg_match('/Meta:\s(.*)/', $key, $matches) && !empty($value)) {
+            $meta = new MetaData();
+            $meta->setKey($matches[1]);
+            $meta->setValue($value);
+            array_push($this->metaData, $meta);
+        }
+    }
+
+    private function finalizeMetaData()
+    {
+        if(!empty($this->metaData)) {
+            $this->product->setMetaData($this->metaData);
+        }
     }
 }
