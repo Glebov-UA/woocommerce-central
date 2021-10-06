@@ -32,10 +32,9 @@ class CsvArrayToProductsBatchConverter
         $create = [];
         $update = [];
 
-        $productConverter = new CsvArrayToProductConverter($this->store);
-
         //create a product and put it into an appropriate array
         foreach ($array as $productVal) {
+            $productConverter = new CsvArrayToProductConverter($this->store);
             $productConverter->convert($productVal);
             $product = $productConverter->getProduct();
             if ($product->getId() != null) {
